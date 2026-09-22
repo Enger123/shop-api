@@ -8,11 +8,11 @@ class UserRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def create_user(self, create_user: UserCreateSchema):
+    def create_user(self, new_user: UserCreateSchema):
         user = User(
-            email=create_user.email,
-            password_hash = hash_password(create_user.password),
-            role = create_user.role
+            email=new_user.email,
+            password_hash = hash_password(new_user.password),
+            role = new_user.role
         )
         self.db.add(user)
         return user
