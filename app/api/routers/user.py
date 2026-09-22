@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from app.api.dependencies import Current_user, UserServiceDep
 from app.schemas.user import UserCreateSchema, UserUpdateSchema
 
-router = APIRouter(tags=["users"])
+router = APIRouter(tags=["Users"])
 
 @router.get("/users")
 def list_users(user_service: UserServiceDep):
@@ -22,7 +22,7 @@ def change_user(current_user,
                     new_user: UserUpdateSchema,
                     user_service: UserServiceDep
                     ):
-    return user_service.change_user(change_user, new_user)
+    return user_service.change_user(current_user, new_user)
 
 @router.delete("/users")
 def delete_user(current_user, user_service: UserServiceDep):
