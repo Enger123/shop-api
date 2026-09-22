@@ -18,7 +18,7 @@ pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 oauth_2_scheme = OAuth2PasswordBearer(tokenUrl='/token')
 
 def get_user(username: str, db: Session):
-    return db.scalars(select(User).where(User.username==username)).first()
+    return db.scalars(select(User).where(User.email==username)).first()
 
 def hash_password(password: str):
     return pwd_context.hash(password)

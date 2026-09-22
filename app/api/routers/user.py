@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from app.api.dependencies import Current_user, UserServiceDep
 from app.schemas.user import UserCreateSchema, UserUpdateSchema
 
-router = APIRouter(tags="users")
+router = APIRouter(tags=["users"])
 
 @router.get("/users")
 def list_users(user_service: UserServiceDep):
