@@ -13,4 +13,7 @@ class Product(Base):
     category: Mapped['Category'] = relationship(back_populates='products')
     is_active: Mapped[bool]
 
+    def __repr__(self):
+        return f"<name={self.name}, description={self.description}, price={self.price}, stock={self.stock}, category_id={self.category_id}, is_active={self.is_active}>"
+
 from app.models import Category

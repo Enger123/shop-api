@@ -12,4 +12,7 @@ class Review(Base):
     rating: Mapped[int]
     text: Mapped[str]
 
+    def __repr__(self):
+            return f"<user_id={self.user_id}, order_id={self.order_id}, product_id={self.product_id}, rating={self.rating}, text={self.text}>"
+
 from app.models.user import User

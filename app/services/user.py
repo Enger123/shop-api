@@ -22,7 +22,7 @@ class UserService:
     def create_user(self,
         new_user: UserCreateSchema,
         ):
-        user = self.user_repository.get_user(new_user.email)
+        user = self.user_repository.get_user_byemail(new_user.email)
         if user:
             raise HTTPException(
                 status_code=403, detail='User already exists'
@@ -45,6 +45,9 @@ class UserService:
         user = self.user_repository.get_user(current_user.id)
         if not user:
             raise HTTPException(status_code=404, detail='User not found')
+        user_by_email = self.user_repository.get_user_byemail(new_user.email)
+        if user_by_email is not None:
+            raise HTTPException(status_code=403, detail='User exists')
         if new_user.email is not None:
             user.email = new_user.email
         if new_user.role is not None:

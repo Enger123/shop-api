@@ -18,12 +18,12 @@ def get_user(user_id: int, user_service: UserServiceDep):
     return user_service.get_user(user_id)
 
 @router.patch("/users")
-def change_user(current_user,
+def change_user(current_user: Current_user,
                     new_user: UserUpdateSchema,
                     user_service: UserServiceDep
                     ):
     return user_service.change_user(current_user, new_user)
 
 @router.delete("/users")
-def delete_user(current_user, user_service: UserServiceDep):
+def delete_user(current_user: Current_user, user_service: UserServiceDep):
     return user_service.delete_user(current_user)
