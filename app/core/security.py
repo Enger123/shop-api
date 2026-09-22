@@ -1,12 +1,12 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import select
-from models import User
+from app.models import User
 from passlib.context import CryptContext
 from datetime import timedelta, datetime, UTC
 from jose import jwt, JWTError
 from fastapi.params import Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from app.db import get_db
+from app.db.session import get_db
 from fastapi import HTTPException
 import os
 
