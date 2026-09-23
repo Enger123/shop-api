@@ -25,7 +25,8 @@ class ProductRepository:
             name=creating_product.name,
             description=creating_product.description,
             price=creating_product.price,
-            stock=creating_product.stock
+            stock=creating_product.stock,
+            is_active=True
         )
         self.db.add(new_product)
         return new_product

@@ -8,6 +8,10 @@ class ProductService:
         self.db = db
         self.product_repository = ProductRepository(db)
 
+    def get_current_admin(self, current_user, operation: str):
+        if current_user.role != 'ADMIN':
+            raise HTTPException(status_code=403, detail=f"User can't {operation} product")
+
     def get_product(self, product_id: int):
         product = self.product_repository.get_product(product_id)
         if not product:
@@ -24,8 +28,7 @@ class ProductService:
                 current_user,
                 creating_product: ProductCreateSchema
                 ):
-        if current_user.role != 'ADMIN':
-            raise HTTPException(status_code=403, detail="User can't add product")
+        self.get_current_admin(current_user, "create")
         product = self.product_repository.add_product(creating_product)
         self.db.commit()
         self.db.refresh(product)
@@ -37,8 +40,7 @@ class ProductService:
                 product_id: int,
                 new_product: ProductUpdateSchema
                 ):
-        if current_user.role != 'ADMIN':
-            raise HTTPException(status_code=403, detail="User can't change product")
+        self.get_current_admin(current_user, "update")
         product = self.product_repository.get_product_with_userid(product_id, current_user.id)
         if not product:
             raise HTTPException(status_code=404, detail='Product not found')
@@ -51,7 +53,7 @@ class ProductService:
         if new_product.price is not None:
                     product.price = new_product.price
         if new_product.is_active is not None:
-                    product.is_active = new_product.is_active   
+            product.is_active = new_product.is_active   
         self.db.commit()
         self.db.refresh(product)
         return ProductResponse.model_validate(product)
@@ -62,8 +64,7 @@ class ProductService:
                 current_user
                 ):
           product = self.product_repository.get_product_with_userid(product_id, current_user.id)
-          if current_user.role != 'ADMIN':
-            raise HTTPException(status_code=403, detail="User can't delete product")
+          self.get_current_admin(current_user, "delete")
           if not product:
             raise HTTPException(status=404, detail='Product not found')
           self.product_repository.delete_product(product_id)

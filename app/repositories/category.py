@@ -14,15 +14,10 @@ class CategoryRepository:
             return self.db.scalars(select(Category)
                   .where(Category.id==category_id)).first()
     
-    def get_category_with_userid(self, category_id: int, user_id: int):
-                return self.db.scalars(select(Category)
-                      .where(Category.id==category_id,
-                             Category.user_id==user_id)
-                      ).first()
     
     def add_category(self, creating_category: CategoryCreateSchema):
             new_category = Category(
-                name=creating_category.name,
+                name=creating_category.name
             )
             self.db.add(new_category)
             return new_category

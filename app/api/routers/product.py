@@ -18,7 +18,7 @@ def create_product(
     new_product: ProductCreateSchema,
     product_service: ProductServiceDep
                    ):
-    return product_service.create_product(current_user, create_product)
+    return product_service.create_product(current_user, new_product)
 
 @router.patch("/products/{id}")
 def change_product(

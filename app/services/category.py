@@ -9,11 +9,9 @@ class CategoryService:
         self.db = db
         self.category_repository = CategoryRepository(db)
 
-    def get_category(self, category_id: int):
-        category = self.category_repository.get_category(category_id)
-        if not category:
-            raise HTTPException(status_code=404, detail='Category not found')
-        return CategoryResponse.model_validate(category)
+    def get_current_admin(self, current_user, operation: str):
+        if current_user.role != 'ADMIN':
+            raise HTTPException(status_code=403, detail=f"User can't {operation} categories")
 
     def get_categories(self):
         categories = self.category_repository.get_categories()
@@ -25,8 +23,7 @@ class CategoryService:
                 current_user,
                 creating_category: CategoryCreateSchema
                 ):
-        if current_user.role != 'ADMIN':
-            raise HTTPException(status_code=403, detail="User can't add product")
+        self.get_current_admin(current_user, "create")
         category = self.category_repository.add_category(creating_category)
         self.db.commit()
         self.db.refresh(category)
@@ -38,8 +35,7 @@ class CategoryService:
                 category_id: int,
                 new_category: CategoryUpdateSchema
                 ):
-        if current_user.role != 'ADMIN':
-            raise HTTPException(status_code=403, detail="User can't change product")
+        self.get_current_admin(current_user, "update")
         category = self.category_repository.get_category(category_id)
         if not category:
             raise HTTPException(status_code=404, detail='Product not found')
@@ -55,8 +51,7 @@ class CategoryService:
                 current_user
                 ):
           category = self.category_repository.get_category(category_id)
-          if current_user.role != 'ADMIN':
-            raise HTTPException(status_code=403, detail="User can't delete product")
+          self.get_current_admin(current_user, "delete")
           if not category:
             raise HTTPException(status=404, detail='Category not found')
           self.category_repository.delete_category(category)

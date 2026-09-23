@@ -10,14 +10,6 @@ def get_categories(
 ):
     return category_service.get_categories()
 
-@router.get("/categories/{category_id}")
-def get_category(
-    category_id: int, 
-    category_service: CategoryServiceDep
-
-):
-    return category_service.get_category(category_id)
-
 @router.post("/categories")
 def add_category(
     current_user: Current_user,
