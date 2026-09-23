@@ -16,4 +16,4 @@ class Product(Base):
     def __repr__(self):
         return f"<name={self.name}, description={self.description}, price={self.price}, stock={self.stock}, category_id={self.category_id}, is_active={self.is_active}>"
 
-from app.models import Category
+from app.models.category import Category
