@@ -4,7 +4,7 @@ from app.core.security import oauth_2_scheme, get_user
 from app.models.user import User
 from sqlalchemy.orm import Session
 from app.db.session import get_db
-from app.services.user import UserService
+from app.services import UserService, ProductService
 from fastapi import HTTPException
 from jose import jwt, JWTError
 from app.core.config import settings
@@ -30,4 +30,10 @@ DBSession = Annotated[Session, Depends(get_db)]
 def get_user_service(db: DBSession):
     return UserService(db)
 
+def get_product_service(db: DBSession):
+    return ProductService(db)
+
 UserServiceDep = Annotated[UserService, Depends(get_user_service)]
+ProductServiceDep = Annotated[ProductService, Depends(get_product_service)]
+
+
