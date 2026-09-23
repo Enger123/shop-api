@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 from app.models import Category
-from schemas.category import CategoryCreateSchema, CategoryResponse, CategoryUpdateSchema
+from app.schemas.category import CategoryCreateSchema, CategoryResponse, CategoryUpdateSchema
 
 class CategoryRepository:
     def __init__(self, db: Session):
@@ -14,9 +14,9 @@ class CategoryRepository:
             return self.db.scalars(select(Category)
                   .where(Category.id==category_id)).first()
     
-    def get_product_with_userid(self, product_id: int, user_id: int):
+    def get_category_with_userid(self, category_id: int, user_id: int):
                 return self.db.scalars(select(Category)
-                      .where(Category.id==product_id,
+                      .where(Category.id==category_id,
                              Category.user_id==user_id)
                       ).first()
     

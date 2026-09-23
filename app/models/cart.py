@@ -7,8 +7,8 @@ class Cart(Base):
     __tablename__ = "carts"
 
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
-    user: Mapped['User'] = relationship(back_populates='carts')
+    users: Mapped[list['User']] = relationship(back_populates='cart')
     created_at: Mapped[datetime]
     updated_at: Mapped[datetime]
 
-from app.models import User
+from app.models.user import User

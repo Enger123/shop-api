@@ -10,13 +10,13 @@ class CategoryService:
         self.category_repository = CategoryRepository(db)
 
     def get_category(self, category_id: int):
-        category = self.category_repository_repository.get_category(category_id)
+        category = self.category_repository.get_category(category_id)
         if not category:
-            raise HTTPException(status=404, detail='Product not found')
+            raise HTTPException(status_code=404, detail='Category not found')
         return CategoryResponse.model_validate(category)
 
     def get_categories(self):
-        categories = self.category_repository.get_products()
+        categories = self.category_repository.get_categories()
         return [CategoryResponse.model_validate(category) 
                 for category in categories]
 
@@ -27,7 +27,7 @@ class CategoryService:
                 ):
         if current_user.role != 'ADMIN':
             raise HTTPException(status_code=403, detail="User can't add product")
-        category = self.product_repository.add_product(creating_category)
+        category = self.category_repository.add_category(creating_category)
         self.db.commit()
         self.db.refresh(category)
         return CategoryResponse.model_validate(category)
@@ -40,7 +40,7 @@ class CategoryService:
                 ):
         if current_user.role != 'ADMIN':
             raise HTTPException(status_code=403, detail="User can't change product")
-        category = self.category_repository.get_product_with_userid(category_id, current_user.id)
+        category = self.category_repository.get_category(category_id)
         if not category:
             raise HTTPException(status_code=404, detail='Product not found')
         if new_category.name is not None:
@@ -51,15 +51,15 @@ class CategoryService:
 
     def delete_category(
                 self, 
-                product_id: int, 
+                category_id: int, 
                 current_user
                 ):
-          product = self.product_repository.get_product_with_userid(product_id, current_user.id)
+          category = self.category_repository.get_category(category_id)
           if current_user.role != 'ADMIN':
             raise HTTPException(status_code=403, detail="User can't delete product")
-          if not product:
-            raise HTTPException(status=404, detail='Product not found')
-          self.product_repository.delete_product(product_id)
+          if not category:
+            raise HTTPException(status=404, detail='Category not found')
+          self.category_repository.delete_category(category)
           self.db.commit()
           return {'message': 'Product deleted'}
     
