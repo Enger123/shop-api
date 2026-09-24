@@ -12,13 +12,14 @@ def list_products(product_service: ProductServiceDep):
 def get_product(product_id: int, product_service: ProductServiceDep):
     return product_service.get_product(product_id)
 
-@router.post("/products")
+@router.post("/products/{category_id}")
 def create_product(
+    category_id: int,
     current_user: Current_user, 
     new_product: ProductCreateSchema,
     product_service: ProductServiceDep
                    ):
-    return product_service.create_product(current_user, new_product)
+    return product_service.create_product(category_id, current_user, new_product)
 
 @router.patch("/products/{id}")
 def change_product(

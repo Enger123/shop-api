@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from app.repositories.product import ProductRepository
+from app.repositories.category import CategoryRepository
 from fastapi import HTTPException
 from app.schemas.product import ProductResponse, ProductCreateSchema, ProductUpdateSchema
 
@@ -7,6 +8,7 @@ class ProductService:
     def __init__(self, db: Session):
         self.db = db
         self.product_repository = ProductRepository(db)
+        self.category_repository = CategoryRepository(db)
 
     def get_current_admin(self, current_user, operation: str):
         if current_user.role != 'ADMIN':
@@ -25,11 +27,15 @@ class ProductService:
 
     def create_product(
                 self,
+                category_id: int,
                 current_user,
                 creating_product: ProductCreateSchema
                 ):
+        category = self.category_repository.get_category(category_id)
+        if not category:
+             raise HTTPException(status_code=404, detail='Category not found')
         self.get_current_admin(current_user, "create")
-        product = self.product_repository.add_product(creating_product)
+        product = self.product_repository.add_product(category_id, creating_product)
         self.db.commit()
         self.db.refresh(product)
         return ProductResponse.model_validate(product)

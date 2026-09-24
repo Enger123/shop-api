@@ -12,7 +12,7 @@ class CategoryService:
     def get_current_admin(self, current_user, operation: str):
         if current_user.role != 'ADMIN':
             raise HTTPException(status_code=403, detail=f"User can't {operation} categories")
-
+    
     def get_categories(self):
         categories = self.category_repository.get_categories()
         return [CategoryResponse.model_validate(category) 
