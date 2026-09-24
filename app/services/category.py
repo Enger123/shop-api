@@ -56,7 +56,7 @@ class CategoryService:
             raise HTTPException(status=404, detail='Category not found')
           self.category_repository.delete_category(category)
           self.db.commit()
-          return {'message': 'Product deleted'}
+          return {'message': 'Category deleted'}
     
           
         
