@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from app.models.cart import Cart, CartItem
 from datetime import datetime
 
@@ -9,7 +9,8 @@ class CartRepository:
 
     def get_products_in_cart(self, user_id: int):
         return self.db.scalars(
-            select(CartItem).where(CartItem.cart.user_id==user_id)
+            select(CartItem).join(Cart).
+            where(Cart.user_id==user_id)
         ).all()
 
     def add_product_in_cart(
@@ -40,3 +41,7 @@ class CartRepository:
         )
         self.db.add(new_cart)
         return new_cart
+
+    def clear_cart_items(self, cart_items):
+        for obj in cart_items:
+            self.db.delete(obj)

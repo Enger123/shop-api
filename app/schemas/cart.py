@@ -3,7 +3,7 @@ from pydantic import BaseModel
 class ProductInfo(BaseModel):
     id: int
     name: str
-    price: int
+    summary_price: int
     model_config = {'from_attributes': True}
 
 

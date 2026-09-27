@@ -35,5 +35,10 @@ class ProductRepository:
     def delete_product(self, product):
         self.db.delete(product)
 
+    def get_product_by_name(self, name: str):
+         return self.db.scalars(Product).where(
+              Product.name==name
+         ).first()
+
 
     

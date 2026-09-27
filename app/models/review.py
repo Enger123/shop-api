@@ -15,7 +15,7 @@ class Review(Base):
     order: Mapped['Order'] = relationship(back_populates="reviews")
 
     def __repr__(self):
-            return f"<id={self.id}, user_id={self.user_id}, order_id={self.order_id}, product_id={self.product_id}, rating={self.rating}, text={self.text}>"
+        return f"<id={self.id}, user_id={self.user_id}, order_id={self.order_id}, product_id={self.product_id}, rating={self.rating}, text={self.text}>"
 
 from app.models.user import User
 from app.models.product import Product

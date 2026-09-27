@@ -24,10 +24,13 @@ class CategoryService:
                 creating_category: CategoryCreateSchema
                 ):
         self.get_current_admin(current_user, "create")
-        category = self.category_repository.add_category(creating_category)
+        category = self.category_repository.get_category_by_name(creating_category.name)
+        if category is not None:
+            raise HTTPException(status_code=409, detail='Category exists')
+        new_category = self.category_repository.add_category(creating_category)
         self.db.commit()
-        self.db.refresh(category)
-        return CategoryResponse.model_validate(category)
+        self.db.refresh(new_category)
+        return CategoryResponse.model_validate(new_category)
 
     def change_category(
                 self,

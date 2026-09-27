@@ -4,7 +4,7 @@ from app.core.security import oauth_2_scheme, get_user
 from app.models.user import User
 from sqlalchemy.orm import Session
 from app.db.session import get_db
-from app.services import UserService, ProductService, CategoryService, OrderService, CartService
+from app.services import UserService, ProductService, CategoryService, OrderService, CartService, ReviewService
 from fastapi import HTTPException
 from jose import jwt, JWTError
 from app.core.config import settings
@@ -42,8 +42,12 @@ def get_order_service(db: DBSession):
 def get_cart_service(db: DBSession):
     return CartService(db)
 
+def get_review_service(db: DBSession):
+    return ReviewService(db)
+
 UserServiceDep = Annotated[UserService, Depends(get_user_service)]
 ProductServiceDep = Annotated[ProductService, Depends(get_product_service)]
 CategoryServiceDep = Annotated[CategoryService, Depends(get_category_service)]
 OrderServiceDep = Annotated[OrderService, Depends(get_order_service)]
 CartServiceDep = Annotated[CartService, Depends(get_cart_service)]
+ReviewServiceDep = Annotated[ReviewService, Depends(get_review_service)]
