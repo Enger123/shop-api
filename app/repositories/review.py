@@ -7,13 +7,20 @@ class ReviewRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def create_review(self, user_id: int, creating_review: ReviewCreateSchema):
+    def create_review(
+            self,
+            user_id: int, 
+            order_id: int,
+            product_id: int,
+            rating: int,
+            text: str
+            ):
         new_review = Review(
             user_id=user_id,
-            order_id=creating_review.order_id,
-            product_id=creating_review.product_id,
-            rating=creating_review.rating,
-            text=creating_review.text
+            order_id=order_id,
+            product_id=product_id,
+            rating=rating,
+            text=text
         )
         self.db.add(new_review)
         return new_review

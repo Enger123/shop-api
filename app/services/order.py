@@ -33,15 +33,23 @@ class OrderService:
         
         total_price = 0
         for cart_item in cart_items:
+            if cart_item.product.stock < cart_item.quantity:
+                raise HTTPException(
+                    status_code=409,
+                    detail=f"Not enough stock for {cart_item.product.name}"
+                )
             total_price += cart_item.product.price * cart_item.quantity
 
         general_order = self.order_repository.create_order(current_user.id, total_price)
         self.db.flush()
 
         self.order_repository.create_order_item(general_order.id, cart_items)
+
         
         self.cart_repository.clear_cart_items(cart_items)
+
         self.db.commit()
         self.db.refresh(general_order)
+
         return OrderResponse.model_validate(general_order)
 

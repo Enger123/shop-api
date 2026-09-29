@@ -17,14 +17,19 @@ class CartService:
                 creating_cart: CartSchema,
                 current_user
                 ):
+        
         product = self.product_repository.get_product(creating_cart.product_id)
         if not product:
             raise HTTPException(status_code=404, detail="Product does not exist")
+        
+        if product.stock < creating_cart.quantity:
+             raise HTTPException(status_code=409, detail='Product not enough')
+        
         cart = self.cart_repository.get_user_cart(current_user.id)
         if cart is None:
             cart = self.cart_repository.create_cart(current_user.id)
-            self.db.commit()
-            self.db.refresh(cart)
+            self.db.flush()
+            
         new_product_in_cart = self.cart_repository.add_product_in_cart(
              product_id=product.id,
              cart_id=cart.id,
@@ -32,6 +37,7 @@ class CartService:
         )
         self.db.commit()
         self.db.refresh(new_product_in_cart)
+
         return CartResponse(
              id=new_product_in_cart.id,
              cart_id=new_product_in_cart.cart_id,

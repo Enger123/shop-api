@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 class ProductInfo(BaseModel):
     id: int
@@ -9,7 +9,7 @@ class ProductInfo(BaseModel):
 
 class CartSchema(BaseModel):
     product_id: int
-    quantity: int
+    quantity: int = Field(gt=0)
 
 class CartResponse(BaseModel):
     id: int

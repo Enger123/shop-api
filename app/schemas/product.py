@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 class ProductCreateSchema(BaseModel):
     name: str
@@ -11,7 +11,7 @@ class ProductResponse(BaseModel):
     name: str
     description: str
     price: int
-    stock: int
+    stock: int = Field(ge=0)
     category_id: int
     is_active: bool
     model_config = {'from_attributes': True}

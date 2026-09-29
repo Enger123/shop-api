@@ -5,6 +5,7 @@ from app.schemas.review import ReviewCreateSchema, ReviewResponse
 from sqlalchemy import select
 from app.repositories.review import ReviewRepository
 from app.repositories.order import OrderRepository
+from app.repositories.product import ProductRepository
 from fastapi import HTTPException
 
 class ReviewService:
@@ -12,16 +13,29 @@ class ReviewService:
         self.db = db
         self.review_repository = ReviewRepository(db)
         self.order_repository = OrderRepository(db)
+        self.product_repository = ProductRepository(db)
 
     #вибє помилка коли додати product_id не існуючий
-    def create_review(self, current_user, creating_review: ReviewCreateSchema):
-        user_order = self.order_repository.get_my_order(
-            current_user.id, creating_review.order_id)
+    def create_review(
+            self,
+            product_id: int,
+            current_user,
+            creating_review: ReviewCreateSchema
+            ):
+        product = self.product_repository.get_product(product_id)
+        if not product: 
+            raise HTTPException(status_code=404, detail='Product not found')
+        user_order = self.order_repository.get_order_by_productid_userid(
+           product_id, current_user.id)
         if not user_order:
             raise HTTPException(status_code=404, detail='User did not order this item')
 
         review = self.review_repository.create_review(
-            current_user.id, creating_review
+            user_id=current_user.id,
+            order_id=user_order.id,
+            product_id=product_id,
+            rating=creating_review.rating,
+            text=creating_review.text
         )
         self.db.commit()
         self.db.refresh(review)
