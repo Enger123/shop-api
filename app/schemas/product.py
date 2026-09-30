@@ -4,14 +4,14 @@ class ProductCreateSchema(BaseModel):
     name: str
     description: str
     price: int
-    stock: int
+    stock: int = Field(gt=0)
 
 class ProductResponse(BaseModel):
     id: int
     name: str
     description: str
     price: int
-    stock: int = Field(ge=0)
+    stock: int
     category_id: int
     is_active: bool
     model_config = {'from_attributes': True}

@@ -21,6 +21,9 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  # cache:
+  #   image: ...
+  
+
 volumes:
   postgres_data:
-    
