@@ -14,12 +14,6 @@ class ProductRepository:
         return self.db.scalars(select(Product)
               .where(Product.id==product_id)).first()
 
-    def get_product_with_userid(self, product_id: int, user_id: int):
-            return self.db.scalars(select(Product)
-                  .where(Product.id==product_id,
-                         Product.user_id==user_id)
-                  ).first()
-
     def add_product(self, category_id, creating_product: ProductCreateSchema):
         new_product = Product(
             name=creating_product.name,

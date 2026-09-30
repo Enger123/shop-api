@@ -32,9 +32,9 @@ class ProductService:
 
         products_to_return = [ProductResponse.model_validate(product) 
                 for product in products]
-
+        
         data_in_cache = [product.model_dump(mode="json") for product in products_to_return]
-
+        
         self.cache.set_products(settings.CACHE_PRODUCTS_KEY, data_in_cache)
 
         return products_to_return
@@ -86,11 +86,11 @@ class ProductService:
                 current_user
                 ):
           self.cache.delete_product(settings.CACHE_PRODUCTS_KEY)
-          product = self.product_repository.get_product_with_userid(product_id, current_user.id)
+          product = self.product_repository.get_product(product_id)
           self.get_current_admin(current_user, "delete")
           if not product:
-            raise HTTPException(status=404, detail='Product not found')
-          self.product_repository.delete_product(product_id)
+            raise HTTPException(status_code=404, detail='Product not found')
+          self.product_repository.delete_product(product)
           self.db.commit()
           return {'message': 'Product deleted'}
     
