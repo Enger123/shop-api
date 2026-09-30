@@ -7,6 +7,9 @@ from app.cache.redis import RedisCachedBackend
 from app.core.config import settings
 
 class ProductService:
+
+    CACHE_PRODUCTS_KEY="cache:products"
+
     def __init__(self, db: Session):
         self.db = db
         self.cache = RedisCachedBackend(settings.REDIS_URL, settings.CACHE_TTL_SECONDS)
@@ -24,9 +27,10 @@ class ProductService:
         return ProductResponse.model_validate(product)
 
     def get_products(self):
-        cache_data = self.cache.list_products(settings.CACHE_PRODUCTS_KEY) 
+        cache_data = self.cache.list_products(self.CACHE_PRODUCTS_KEY) 
         if cache_data is not None:
-             return cache_data
+             return [ProductResponse.model_validate(product) 
+                for product in cache_data]
         
         products = self.product_repository.get_products()
 
@@ -35,7 +39,7 @@ class ProductService:
         
         data_in_cache = [product.model_dump(mode="json") for product in products_to_return]
         
-        self.cache.set_products(settings.CACHE_PRODUCTS_KEY, data_in_cache)
+        self.cache.set_products(self.CACHE_PRODUCTS_KEY, data_in_cache)
 
         return products_to_return
 
@@ -45,7 +49,7 @@ class ProductService:
                 current_user,
                 creating_product: ProductCreateSchema
                 ):
-        self.cache.delete_product(settings.CACHE_PRODUCTS_KEY)
+        self.cache.delete_product(self.CACHE_PRODUCTS_KEY)
         category = self.category_repository.get_category(category_id)
         if not category:
              raise HTTPException(status_code=404, detail='Category not found')
@@ -61,7 +65,7 @@ class ProductService:
                 product_id: int,
                 new_product: ProductUpdateSchema
                 ):
-        self.cache.delete_product(settings.CACHE_PRODUCTS_KEY)
+        self.cache.delete_product(self.CACHE_PRODUCTS_KEY)
         self.get_current_admin(current_user, "update")
         product = self.product_repository.get_product_with_userid(product_id, current_user.id)
         if not product:
@@ -85,7 +89,7 @@ class ProductService:
                 product_id: int, 
                 current_user
                 ):
-          self.cache.delete_product(settings.CACHE_PRODUCTS_KEY)
+          self.cache.delete_product(self.CACHE_PRODUCTS_KEY)
           product = self.product_repository.get_product(product_id)
           self.get_current_admin(current_user, "delete")
           if not product:

@@ -10,7 +10,7 @@ class RedisCachedBackend:
     def list_products(self, key: str):
         value = self.redis.get(key)
         if value is not None:
-            return json.loads(self.redis.get(key))
+            return json.loads(value)
 
     def set_products(self, key: str, value: str):
         self.redis.set(key, json.dumps(value), ex=self.cache_ttl_seconds)
