@@ -61,7 +61,7 @@ class CartService:
                      product=ProductInfo(
                           id=cart_item.product_id,
                           name=cart_item.product.name,
-                          summary_price=cart_item.quantity
+                          summary_price=cart_item.quantity*cart_item.product.price
                      )
                 ) for cart_item in cart_items
         ]

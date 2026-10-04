@@ -27,7 +27,7 @@ class ProductService:
         return ProductResponse.model_validate(product)
 
     def get_products(self):
-        cache_data = self.cache.list_products(self.CACHE_PRODUCTS_KEY) 
+        cache_data = self.cache.list_cache(self.CACHE_PRODUCTS_KEY) 
         if cache_data is not None:
              return [ProductResponse.model_validate(product) 
                 for product in cache_data]
@@ -39,7 +39,7 @@ class ProductService:
         
         data_in_cache = [product.model_dump(mode="json") for product in products_to_return]
         
-        self.cache.set_products(self.CACHE_PRODUCTS_KEY, data_in_cache)
+        self.cache.set_cache(self.CACHE_PRODUCTS_KEY, data_in_cache)
 
         return products_to_return
 
@@ -49,14 +49,16 @@ class ProductService:
                 current_user,
                 creating_product: ProductCreateSchema
                 ):
-        self.cache.delete_product(self.CACHE_PRODUCTS_KEY)
+        self.get_current_admin(current_user, "create")
+
         category = self.category_repository.get_category(category_id)
         if not category:
              raise HTTPException(status_code=404, detail='Category not found')
-        self.get_current_admin(current_user, "create")
+        
         product = self.product_repository.add_product(category_id, creating_product)
         self.db.commit()
         self.db.refresh(product)
+        self.cache.delete_cache(self.CACHE_PRODUCTS_KEY)
         return ProductResponse.model_validate(product)
 
     def change_product(
@@ -65,11 +67,12 @@ class ProductService:
                 product_id: int,
                 new_product: ProductUpdateSchema
                 ):
-        self.cache.delete_product(self.CACHE_PRODUCTS_KEY)
         self.get_current_admin(current_user, "update")
-        product = self.product_repository.get_product_with_userid(product_id, current_user.id)
+
+        product = self.product_repository.get_product(product_id)
         if not product:
             raise HTTPException(status_code=404, detail='Product not found')
+        
         if new_product.name is not None:
             product.name = new_product.name
         if new_product.description is not None:
@@ -82,6 +85,7 @@ class ProductService:
             product.is_active = new_product.is_active   
         self.db.commit()
         self.db.refresh(product)
+        self.cache.delete_cache(self.CACHE_PRODUCTS_KEY)
         return ProductResponse.model_validate(product)
 
     def delete_product(
@@ -89,13 +93,15 @@ class ProductService:
                 product_id: int, 
                 current_user
                 ):
-          self.cache.delete_product(self.CACHE_PRODUCTS_KEY)
-          product = self.product_repository.get_product(product_id)
           self.get_current_admin(current_user, "delete")
+
+          product = self.product_repository.get_product(product_id)
           if not product:
             raise HTTPException(status_code=404, detail='Product not found')
+          
           self.product_repository.delete_product(product)
           self.db.commit()
+          self.cache.delete_cache(self.CACHE_PRODUCTS_KEY)
           return {'message': 'Product deleted'}
     
           

@@ -21,7 +21,7 @@ def create_product(
                    ):
     return product_service.create_product(category_id, current_user, new_product)
 
-@router.patch("/products/{id}")
+@router.patch("/products/{product_id}")
 def change_product(
     current_user: Current_user,
     product_id: int,
@@ -30,7 +30,7 @@ def change_product(
 ):
     return product_service.change_product(current_user, product_id, new_product)
 
-@router.delete("/products/{id}")
+@router.delete("/products/{product_id}")
 def delete_product(
     current_user: Current_user,
     product_id: int,
