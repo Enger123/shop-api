@@ -48,10 +48,36 @@ def test_user(test_client: TestClient):
     return data
 
 @pytest.fixture
+def test_user2(test_client: TestClient):
+    response = test_client.post("/users",
+                                        json={
+                                            'email': 'roman@gmail.com',
+                                            'password': '123123',
+                                            'role': 'USER'
+        
+                                        }
+                                        )
+    data = response.json()
+    assert response.status_code == 200
+    assert 'roman@gmail.com' in data['email']
+    return data
+
+@pytest.fixture
 def token(test_client: TestClient, test_user):
     login = test_client.post("/token",
                                 data={
                                     'username': test_user['email'],
+                                    'password': '123123'
+                                }
+                                )
+    assert login.status_code == 200
+    return login.json()['access_token']
+
+@pytest.fixture
+def token2(test_client: TestClient, test_user2):
+    login = test_client.post("/token",
+                                data={
+                                    'username': test_user2['email'],
                                     'password': '123123'
                                 }
                                 )
@@ -78,9 +104,7 @@ def test_product(test_client: TestClient, test_category, token):
                                     'name': 'Штани',
                                     'description': 'Круті',
                                     'price': 8000,
-                                    'stock': 8,
-                                    'category_id': test_category['id'],
-                                    'is_active': True
+                                    'stock': 8
                                 },
                                 headers={
                                     'Authorization': f'Bearer {token}'
@@ -113,6 +137,23 @@ def test_order(test_client: TestClient, test_cart, token):
                                 )
     assert response.status_code == 200
     return response.json()
+
+@pytest.fixture
+def test_review(test_client: TestClient, test_product, test_order, token):
+    response = test_client.post(f"/products/{test_product['id']}/reviews",
+                                json={
+                                    'rating': 5,
+                                    'text': 'Some text'
+                                },
+                                headers={
+                                    'Authorization': f"Bearer {token}"
+                                }
+                                )
+    data = response.json()
+    assert response.status_code == 200
+    assert data['rating'] == 5
+    assert data['text'] == 'Some text'
+    return data
 
 
 

@@ -17,10 +17,10 @@ class ProductRepository:
     def add_product(self, category_id, creating_product: ProductCreateSchema):
         new_product = Product(
             name=creating_product.name,
-            category_id=category_id,
             description=creating_product.description,
             price=creating_product.price,
             stock=creating_product.stock,
+            category_id=category_id,
             is_active=True
         )
         self.db.add(new_product)

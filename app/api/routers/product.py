@@ -8,7 +8,7 @@ router = APIRouter(tags=["Products"])
 def list_products(product_service: ProductServiceDep):
     return product_service.get_products()
 
-@router.get("/products/{id}")
+@router.get("/products/{product_id}")
 def get_product(product_id: int, product_service: ProductServiceDep):
     return product_service.get_product(product_id)
 

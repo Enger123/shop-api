@@ -6,8 +6,6 @@ def test_get_products_in_cart(test_client: TestClient, test_cart, token):
                                     'Authorization': f'Bearer {token}'
                                 }
     )
-    print(response.json())
-
     assert response.status_code == 200
 
 def test_create_cart_success(test_client: TestClient, test_product, token):
@@ -45,3 +43,4 @@ def test_create_cart_with_notenouh_stock(test_client: TestClient, token, test_pr
                                     }
                                     )
     assert response.status_code == 409
+    assert test_product['stock'] == 8

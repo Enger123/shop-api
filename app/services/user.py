@@ -43,8 +43,6 @@ class UserService:
                     new_user: UserUpdateSchema
                     ):
         user = self.user_repository.get_user(current_user.id)
-        if not user:
-            raise HTTPException(status_code=404, detail='User not found')
         user_by_email = self.user_repository.get_user_byemail(new_user.email)
         if user_by_email is not None:
             raise HTTPException(status_code=403, detail='User exists')
@@ -58,8 +56,6 @@ class UserService:
 
     def delete_user(self, current_user):
         user_to_del = self.user_repository.get_user(current_user.id)
-        if not user_to_del:
-            raise HTTPException(status_code=404, detail='User not found')
         self.user_repository.delete_user(user_to_del)
         self.db.commit()
         return {'message': 'User deleted'}

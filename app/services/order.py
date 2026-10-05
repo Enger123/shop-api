@@ -45,6 +45,8 @@ class OrderService:
 
         self.order_repository.create_order_item(general_order.id, cart_items)
 
+        for cart_item in cart_items:
+            cart_item.product.stock -= cart_item.quantity
         
         self.cart_repository.clear_cart_items(cart_items)
 

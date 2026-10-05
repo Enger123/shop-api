@@ -1,7 +1,7 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 class ReviewCreateSchema(BaseModel):
-    rating: int
+    rating: int = Field(ge=0, le=10)
     text: str
 
 class ReviewResponse(BaseModel):

@@ -62,7 +62,7 @@ class CategoryService:
         self.get_current_admin(current_user, "update")
         category = self.category_repository.get_category(category_id)
         if not category:
-            raise HTTPException(status_code=404, detail='Product not found')
+            raise HTTPException(status_code=404, detail='Category not found')
         
         if new_category.name is not None:
             category.name = new_category.name 
