@@ -35,7 +35,8 @@ REST API for online store using Python and FastAPI.
 
 ## Project structure
 
-```shop-api/
+```
+shop-api/
 │   .gitignore
 │   alembic.ini
 │   docker-compose.yml
