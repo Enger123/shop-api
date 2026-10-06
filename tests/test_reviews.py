@@ -69,7 +69,7 @@ def test_create_review(
 
 
 def test_create_review_unexisting_product(test_client: TestClient, token):
-    response = test_client.post(f"/products/9999999999/reviews",
+    response = test_client.post(f"/products/9999/reviews",
                                     json={
                                         'rating': 5,
                                         'text': 'Some text'
@@ -78,6 +78,21 @@ def test_create_review_unexisting_product(test_client: TestClient, token):
                                         'Authorization': f"Bearer {token}"
                                     }
                                     )
+    assert response.status_code == 404
+
+def test_create_review_not_ordering_product(
+        test_client: TestClient,
+        token,
+        test_product
+):
+    response = test_client.post(f"/products/{test_product['id']}/reviews",
+                                json={
+                                    'rating': 5,
+                                    'text': 'Some text'
+                                },
+                                headers={
+                                    'Authorization': f"Bearer {token}"
+                                })
     assert response.status_code == 404
 
 

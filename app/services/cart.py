@@ -7,12 +7,12 @@ from app.repositories.product import ProductRepository
 from fastapi import HTTPException
 
 class CartService:
-    def __init__(self, db: Session):
-            self.db = db
-            self.cart_repository = CartRepository(db)
-            self.product_repository = ProductRepository(db)
+     def __init__(self, db: Session):
+          self.db = db
+          self.cart_repository = CartRepository(db)
+          self.product_repository = ProductRepository(db)
 
-    def add_product_in_cart(
+     def add_product_in_cart(
                 self,
                 creating_cart: CartSchema,
                 current_user
@@ -48,7 +48,7 @@ class CartService:
              )
         )
 
-    def get_products_in_my_cart(
+     def get_products_in_my_cart(
               self, 
               current_user,
 
