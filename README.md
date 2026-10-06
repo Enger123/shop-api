@@ -35,7 +35,88 @@ REST API for online store using Python and FastAPI.
 
 ## Project structure
 
-
+shop-api/
+│   .gitignore
+│   alembic.ini
+│   docker-compose.yml
+│   Dockerfile
+│   main.py
+│   pyproject.toml
+│   README.md
+│   requirements.txt              
+│
+├───app
+│   ├───api
+│   │   │   dependencies.py
+│   │   │
+│   │   ├───routers
+│   │           auth.py
+│   │           cart.py
+│   │           category.py
+│   │           order.py
+│   │           product.py
+│   │           review.py
+│   │           user.py       
+│   │
+│   ├───cache
+│   │    redis.py
+│   │
+│   ├───core
+│   │      config.py
+│   │      security.py
+│   │   
+│   │
+│   ├───db
+│   │      session.py
+│   │
+│   ├───models
+│   │      base.py
+│   │      cart.py
+│   │      cart_item.py
+│   │      category.py
+│   │      order.py
+│   │      order_item.py
+│   │      product.py
+│   │      review.py
+│   │      user.py
+│   │      __init__.py
+│   │   
+│   ├───repositories
+│   │      cart.py
+│   │      category.py
+│   │      order.py
+│   │      product.py
+│   │      review.py
+│   │      user.py
+│   │   
+│   ├───schemas
+│   │      cart.py
+│   │      category.py
+│   │      order.py
+│   │      product.py
+│   │      review.py
+│   │      user.py
+│   │
+│   └───services
+│       │   cart.py
+│       │   category.py
+│       │   order.py
+│       │   product.py
+│       │   review.py
+│       │   user.py
+│       │   __init__.py
+│
+├───tests
+│   │   conftest.py
+│   │   database.py
+│   │   test_auth.py
+│   │   test_cache.py
+│   │   test_carts.py
+│   │   test_categories.py
+│   │   test_orders.py
+│   │   test_products.py
+│   │   test_reviews.py
+│   │   test_user.py
 
 ## Main functionality
 
