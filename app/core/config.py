@@ -13,7 +13,6 @@ class Settings(BaseSettings):
     CACHE_TTL_SECONDS: int
     REDIS_HOST: str
     REDIS_PORT: int
-    CACHE_PRODUCTS_KEY: str
 
     @property
     def DATABASE_URL(self):
