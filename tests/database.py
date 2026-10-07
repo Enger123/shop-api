@@ -3,9 +3,13 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 from main import app
 from app.db.session import get_db
 from sqlalchemy.pool import NullPool
+import os
 
 test_db = create_engine(
-    "postgresql+psycopg://postgres:Enger123@localhost:5432/shop_api_test",
+    os.getenv(
+        "TEST_DATABASE_URL",
+        "postgresql+psycopg://postgres:Enger123@localhost:5432/shop_api_test"
+    ),
     poolclass=NullPool
 )
 
