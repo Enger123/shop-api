@@ -40,9 +40,9 @@ def test_get_categories(test_client: TestClient, test_category):
     assert response.status_code == 200
     assert 'Clothes' in data[0]['name']
 
-def test_get_category(test_client: TestClient, test_category):
+def test_get_category_not_found(test_client: TestClient, test_category):
     response = test_client.get(f"/categories/9999")
-    assert response.status_code == 200
+    assert response.status_code == 404
 
 def test_change_category_user(test_client: TestClient, test_category, token2):
     response = test_client.patch(f"/categories/{test_category['id']}",
