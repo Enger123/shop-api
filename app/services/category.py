@@ -35,6 +35,12 @@ class CategoryService:
 
         return categories_to_return
 
+    def get_category(self, category_id):
+        category = self.category_repository.get_category(category_id)
+        if not category:
+            raise HTTPException(status_code=404, detail='Category not found')
+        return CategoryResponse.model_validate(category)
+
     def add_category(
                 self,
                 current_user,
