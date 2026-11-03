@@ -37,9 +37,7 @@ def test_user(test_client: TestClient):
     response = test_client.post("/users",
                                     json={
                                         'email': 'aid@gmail.com',
-                                        'password': '123123',
-                                        'role': 'ADMIN'
-    
+                                        'password': '123123'    
                                     }
                                     )
     data = response.json()
@@ -52,9 +50,7 @@ def test_user2(test_client: TestClient):
     response = test_client.post("/users",
                                         json={
                                             'email': 'roman@gmail.com',
-                                            'password': '123123',
-                                            'role': 'USER'
-        
+                                            'password': '123123',        
                                         }
                                         )
     data = response.json()

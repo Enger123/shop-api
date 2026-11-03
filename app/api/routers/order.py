@@ -1,5 +1,5 @@
 from app.api.dependencies import Current_user, OrderServiceDep
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 
 router = APIRouter(tags=["Orders"])
 
@@ -19,8 +19,10 @@ def get_my_order(
     return order_service.get_my_order(order_id=order_id, current_user=current_user)
 
 @router.post("/orders")
-def add_products_in_order(
+async def add_products_in_order(
     current_user: Current_user,
-    order_service: OrderServiceDep
+    order_service: OrderServiceDep,
+    request: Request
 ):
-    return order_service.add_to_orders(current_user)
+    return await order_service.add_to_orders(current_user, request.app.state.order_exchange)
+    

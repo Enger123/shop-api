@@ -1,5 +1,5 @@
 from app.models.base import Base
-from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.orm import relationship
 
 class User(Base):
@@ -7,7 +7,7 @@ class User(Base):
 
     email: Mapped[str]
     password_hash: Mapped[str]
-    role: Mapped[str]
+    role: Mapped[str] = mapped_column(default='USER')
     cart: Mapped['Cart'] = relationship(back_populates='users', cascade="all, delete-orphan")
     reviews: Mapped[list['Review']] = relationship(back_populates="user")
     orders: Mapped[list['Order']] = relationship(back_populates="user")

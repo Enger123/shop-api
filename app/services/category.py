@@ -90,8 +90,6 @@ class CategoryService:
           
           self.category_repository.delete_category(category)
           self.db.commit()
-          self.cache.delete_cache(self.CACHE_CATEGORIES_KEY)
-          return {'message': 'Category deleted'}
-    
+          self.cache.delete_cache(self.CACHE_CATEGORIES_KEY)    
           
         

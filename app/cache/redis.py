@@ -1,6 +1,5 @@
 from redis import Redis
 import json
-from app.core.config import settings
 
 class RedisCachedBackend:
     def __init__(self, redis_url: str, cache_ttl_seconds: int):

@@ -10,14 +10,7 @@ class UserService:
 
     def list_users(self):
         users = self.user_repository.list_users()
-        return [
-            UserResponse(
-                id=user.id,
-                email=user.email,
-                role=user.role
-                )
-            for user in users
-        ]
+        return [UserResponse.model_validate(user) for user in users]
 
     def create_user(self,
         new_user: UserCreateSchema,
@@ -48,8 +41,6 @@ class UserService:
             raise HTTPException(status_code=403, detail='User exists')
         if new_user.email is not None:
             user.email = new_user.email
-        if new_user.role is not None:
-            user.role = new_user.role
         self.db.commit()
         self.db.refresh(user)
         return UserResponse.model_validate(user)

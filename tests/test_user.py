@@ -7,15 +7,15 @@ def test_get_users(test_client: TestClient, test_user):
     assert response.status_code == 200
     assert isinstance(data, list)
     assert "aid@gmail.com" in data[0]['email']
-    assert "ADMIN" in data[0]['role']
+    assert "USER" in data[0]['role']
 
 @pytest.mark.parametrize(
         argnames='payload, exp_status_code',
         argvalues=[
-        [{'email': 'aid@gmail.com', 'password': '123123', 'role': 'ADMIN'}, 200],
+        [{'email': 'aid@gmail.com', 'password': '123123', 'role': 'ADMIN'}, 422],
         [{'email': 'aid@gmail.com', 'password': '12312', 'role': 'ADMIN'}, 422],
-        [{'email': 'aid@gmail.com', 'password': '123123', 'role': 'MODERATOR'}, 422],
-        [{'email': 'aid@gmail.com', 'password': '123123212222222222222222222222222222222222222222', 'role': 'ADMIN'}, 422]
+        [{'email': 'aid@gmail.com', 'password': '123123212222222222222222222222222222222222222222', 'role': 'ADMIN'}, 422],
+        [{'email': 'aid@gmail.com', 'password': '123123'}, 200]
         ]
 )
 def test_add_user(
@@ -32,9 +32,7 @@ def test_create_same_user(test_client: TestClient, test_user):
     response = test_client.post("/users",
                                     json={
                                     'email': 'aid@gmail.com',
-                                    'password': '123123',
-                                    'role': 'ADMIN'
-
+                                    'password': '123123'
                                 }
                                 )
     assert response.status_code == 403
@@ -46,7 +44,7 @@ def test_get_user(test_client: TestClient, test_user):
     assert response.status_code == 200
     assert isinstance(data, dict)
     assert data['email'] == "aid@gmail.com"
-    assert data['role'] == 'ADMIN'
+    assert data['role'] == 'USER'
 
 def test_unexisting_user(test_client: TestClient):
     response = test_client.get("/users/9999")

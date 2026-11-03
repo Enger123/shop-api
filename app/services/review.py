@@ -15,7 +15,6 @@ class ReviewService:
         self.order_repository = OrderRepository(db)
         self.product_repository = ProductRepository(db)
 
-    #вибє помилка коли додати product_id не існуючий
     def create_review(
             self,
             product_id: int,

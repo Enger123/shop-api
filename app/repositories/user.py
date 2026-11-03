@@ -11,9 +11,8 @@ class UserRepository:
     def create_user(self, new_user: UserCreateSchema):
         user = User(
             email=new_user.email,
-            password_hash = hash_password(new_user.password),
-            role = new_user.role
-        )
+            password_hash = hash_password(new_user.password)
+            )
         self.db.add(user)
         return user
 

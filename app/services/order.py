@@ -3,6 +3,9 @@ from app.repositories.order import OrderRepository
 from app.repositories.cart import CartRepository
 from app.schemas.order import OrderResponse
 from fastapi import HTTPException
+from app.messaging.rabbitmq import event_publish_json
+from app.core.config import settings
+from uuid import uuid4
 
 
 class OrderService:
@@ -22,7 +25,7 @@ class OrderService:
             raise HTTPException(status_code=404, detail='Orders not found')
         return OrderResponse.model_validate(user_order)
 
-    def add_to_orders(self, current_user):
+    async def add_to_orders(self, current_user, order_exchange):
         cart = self.cart_repository.get_user_cart(current_user.id)
         if cart is None:
             raise HTTPException(status_code=404, detail='Cart not found')
@@ -52,6 +55,19 @@ class OrderService:
 
         self.db.commit()
         self.db.refresh(general_order)
+
+        event = {
+            "event_id": str(uuid4()),
+            "user_id": current_user.id,
+            "order_id": general_order.id,
+            "amount": general_order.total_price
+        }
+
+        await event_publish_json(
+            exchange=order_exchange,
+            routing_key=settings.ORDER_ROUTING_KEY,
+            data=event
+        )
 
         return OrderResponse.model_validate(general_order)
 

@@ -1,20 +1,20 @@
 from app.api.dependencies import CategoryServiceDep, Current_user
-from fastapi import APIRouter
+from fastapi import APIRouter, status
 from app.schemas.category import CategoryCreateSchema, CategoryResponse, CategoryUpdateSchema
 
 router = APIRouter(tags=["Categories"])
 
-@router.get("/categories")
+@router.get("/categories", response_model=list[CategoryResponse])
 def get_categories(
     category_service: CategoryServiceDep
 ):
     return category_service.get_categories()
 
-@router.get("/categories/{category_id}")
+@router.get("/categories/{category_id}", response_model=CategoryResponse)
 def get_category(category_id: int, category_service: CategoryServiceDep):
     return category_service.get_category(category_id)
 
-@router.post("/categories")
+@router.post("/categories", response_model=CategoryResponse)
 def add_category(
     current_user: Current_user,
     creating_category: CategoryCreateSchema,
@@ -23,7 +23,7 @@ def add_category(
 ): 
     return category_service.add_category(current_user=current_user, creating_category=creating_category)
 
-@router.patch("/categories/{category_id}")
+@router.patch("/categories/{category_id}", response_model=CategoryResponse)
 def change_category(
     category_id: int,
     category_service: CategoryServiceDep,
@@ -37,7 +37,7 @@ def change_category(
         new_category=new_category
         )
 
-@router.delete("/categories/{category_id}")
+@router.delete("/categories/{category_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_category(
     category_id: int,
     current_user: Current_user,

@@ -13,6 +13,10 @@ class Settings(BaseSettings):
     CACHE_TTL_SECONDS: int
     REDIS_HOST: str
     REDIS_PORT: int
+    ORDER_EXCHANGE: str = "order"
+    ORDER_ROUTING_KEY: str = "order.created"
+    NOTIFICATIONS_QUEUE: str = "notifications.order_created"
+    RABBIT_HOST: str
 
     @property
     def DATABASE_URL(self):
@@ -21,6 +25,10 @@ class Settings(BaseSettings):
     @property
     def REDIS_URL(self):
         return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/0"
+
+    @property
+    def RABBITMQ_URL(self):
+        return f"amqp://guest:guest@{self.RABBIT_HOST}:5672/"
 
     model_config = SettingsConfigDict(
         env_file=".env"

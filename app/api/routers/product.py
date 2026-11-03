@@ -4,15 +4,15 @@ from app.schemas.product import ProductResponse, ProductUpdateSchema, ProductCre
 
 router = APIRouter(tags=["Products"])
 
-@router.get("/products")
+@router.get("/products", response_model=list[ProductResponse])
 def list_products(product_service: ProductServiceDep):
     return product_service.get_products()
 
-@router.get("/products/{product_id}")
+@router.get("/products/{product_id}", response_model=ProductResponse)
 def get_product(product_id: int, product_service: ProductServiceDep):
     return product_service.get_product(product_id)
 
-@router.post("/products/{category_id}")
+@router.post("/products/{category_id}", response_model=ProductResponse)
 def create_product(
     category_id: int,
     current_user: Current_user, 
@@ -21,7 +21,7 @@ def create_product(
                    ):
     return product_service.create_product(category_id, current_user, new_product)
 
-@router.patch("/products/{product_id}")
+@router.patch("/products/{product_id}", response_model=ProductResponse)
 def change_product(
     current_user: Current_user,
     product_id: int,
