@@ -4,18 +4,16 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - RABBIT_HOST: rabbitmq
-      - DB_HOST: postgres
-      - REDIS_HOST: cache
+      RABBIT_HOST: rabbitmq
+      DB_HOST: postgres
+      REDIS_HOST: cache
 
     depends_on: 
       rabbitmq:
         condition: service_healthy
       postgres:
         condition: service_started
-    
-    env_file:
-      - .env
+  
     
   postgres:
     image: postgres:16-alpine

@@ -17,6 +17,8 @@ class Settings(BaseSettings):
     ORDER_ROUTING_KEY: str = "order.created"
     NOTIFICATIONS_QUEUE: str = "notifications.order_created"
     RABBIT_HOST: str
+    EMAIL: str
+    PASSWORD: str
 
     @property
     def DATABASE_URL(self):

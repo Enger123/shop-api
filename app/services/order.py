@@ -50,17 +50,24 @@ class OrderService:
 
         for cart_item in cart_items:
             cart_item.product.stock -= cart_item.quantity
-        
+        ordered_items = [
+            {
+                "product": cart_item.product.name,
+                "quantity": cart_item.quantity
+             } for cart_item in cart_items
+        ]
         self.cart_repository.clear_cart_items(cart_items)
 
         self.db.commit()
         self.db.refresh(general_order)
-
         event = {
             "event_id": str(uuid4()),
             "user_id": current_user.id,
             "order_id": general_order.id,
-            "amount": general_order.total_price
+            "amount": general_order.total_price,
+            "user_email": current_user.email,
+            'price': general_order.total_price,
+            "ordered_items": ordered_items
         }
 
         await event_publish_json(
