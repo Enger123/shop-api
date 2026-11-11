@@ -4,6 +4,8 @@ from main import app
 from app.db.session import get_db
 from sqlalchemy.pool import NullPool
 import os
+from typing import Annotated
+from fastapi import Depends
 
 test_db = create_engine(
     os.getenv(
@@ -21,8 +23,5 @@ def get_test_db():
         yield db
     finally:
         db.close()
-
-app.dependency_overrides[get_db] = get_test_db
-
 
 

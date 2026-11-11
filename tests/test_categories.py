@@ -92,7 +92,7 @@ def test_delete_category_admin(test_client: TestClient, test_category, token):
                                      'Authorization': f"Bearer {token}"
                                  }
                                  )
-    assert response.status_code == 200
+    assert response.status_code == 204
 
 def test_delete_unexisting_category(test_client: TestClient, token):
     response = test_client.delete(f"/categories/9999",

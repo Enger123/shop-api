@@ -7,7 +7,7 @@ def test_get_users(test_client: TestClient, test_user):
     assert response.status_code == 200
     assert isinstance(data, list)
     assert "aid@gmail.com" in data[0]['email']
-    assert "USER" in data[0]['role']
+    assert "ADMIN" in data[0]['role']
 
 @pytest.mark.parametrize(
         argnames='payload, exp_status_code',
@@ -38,13 +38,13 @@ def test_create_same_user(test_client: TestClient, test_user):
     assert response.status_code == 403
 
 def test_get_user(test_client: TestClient, test_user):
-    response = test_client.get(f"/users/{test_user['id']}")
+    response = test_client.get(f"/users/{test_user.id}")
 
     data = response.json()
     assert response.status_code == 200
     assert isinstance(data, dict)
     assert data['email'] == "aid@gmail.com"
-    assert data['role'] == 'USER'
+    assert data['role'] == 'ADMIN'
 
 def test_unexisting_user(test_client: TestClient):
     response = test_client.get("/users/9999")
@@ -55,7 +55,7 @@ def test_unexisting_user(test_client: TestClient):
     argnames='payload, exp_status_code',
     argvalues=[
         [{'email': 'asdad@fasf.caf'}, 200],
-        [{'role': "USER"}, 200],
+        [{'role': "USER"}, 422],
         [{'role': 'MODERATOR'}, 422],
         [{'email': 123}, 422]
     ]

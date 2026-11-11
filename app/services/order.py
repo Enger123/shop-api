@@ -6,11 +6,14 @@ from fastapi import HTTPException
 from app.messaging.rabbitmq import event_publish_json
 from app.core.config import settings
 from uuid import uuid4
+from app.cache.redis import RedisCachedBackend
 
 
 class OrderService:
+    
     def __init__(self, db: Session):
         self.db = db
+        self.cache = RedisCachedBackend(settings.REDIS_URL, settings.CACHE_TTL_SECONDS)
         self.order_repository = OrderRepository(db)
         self.cart_repository = CartRepository(db)
 
@@ -60,6 +63,7 @@ class OrderService:
 
         self.db.commit()
         self.db.refresh(general_order)
+        self.cache.delete_cache(settings.CACHE_PRODUCTS_KEY)
         event = {
             "event_id": str(uuid4()),
             "user_id": current_user.id,

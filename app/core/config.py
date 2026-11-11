@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     ALGORITHM: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int
     CACHE_TTL_SECONDS: int
+    CACHE_PRODUCTS_KEY: str="cache:products"
     REDIS_HOST: str
     REDIS_PORT: int
     ORDER_EXCHANGE: str = "order"

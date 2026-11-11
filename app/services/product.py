@@ -8,8 +8,6 @@ from app.core.config import settings
 
 class ProductService:
 
-    CACHE_PRODUCTS_KEY="cache:products"
-
     def __init__(self, db: Session):
         self.db = db
         self.cache = RedisCachedBackend(settings.REDIS_URL, settings.CACHE_TTL_SECONDS)
@@ -27,7 +25,7 @@ class ProductService:
         return ProductResponse.model_validate(product)
 
     def get_products(self):
-        cache_data = self.cache.list_cache(self.CACHE_PRODUCTS_KEY) 
+        cache_data = self.cache.list_cache(settings.CACHE_PRODUCTS_KEY) 
         if cache_data is not None:
              return [ProductResponse.model_validate(product) 
                 for product in cache_data]
@@ -39,7 +37,7 @@ class ProductService:
         
         data_in_cache = [product.model_dump(mode="json") for product in products_to_return]
         
-        self.cache.set_cache(self.CACHE_PRODUCTS_KEY, data_in_cache)
+        self.cache.set_cache(settings.CACHE_PRODUCTS_KEY, data_in_cache)
 
         return products_to_return
 
@@ -58,7 +56,7 @@ class ProductService:
         product = self.product_repository.add_product(category_id, creating_product)
         self.db.commit()
         self.db.refresh(product)
-        self.cache.delete_cache(self.CACHE_PRODUCTS_KEY)
+        self.cache.delete_cache(settings.CACHE_PRODUCTS_KEY)
         return ProductResponse.model_validate(product)
 
     def change_product(
@@ -85,7 +83,7 @@ class ProductService:
             product.is_active = new_product.is_active   
         self.db.commit()
         self.db.refresh(product)
-        self.cache.delete_cache(self.CACHE_PRODUCTS_KEY)
+        self.cache.delete_cache(settings.CACHE_PRODUCTS_KEY)
         return ProductResponse.model_validate(product)
 
     def delete_product(
@@ -101,7 +99,7 @@ class ProductService:
           
           self.product_repository.delete_product(product)
           self.db.commit()
-          self.cache.delete_cache(self.CACHE_PRODUCTS_KEY)
+          self.cache.delete_cache(settings.CACHE_PRODUCTS_KEY)
           return {'message': 'Product deleted'}
     
           

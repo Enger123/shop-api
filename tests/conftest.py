@@ -4,6 +4,19 @@ from main import app
 from app.models.base import Base
 from tests.database import test_db
 from sqlalchemy import text
+from app.models.user import User
+from tests.database import TestSession, get_db, get_test_db
+
+
+app.dependency_overrides[get_db] = get_test_db
+
+@pytest.fixture
+def db(): 
+    db = TestSession()
+    try:
+        yield db
+    finally:
+        db.close()
 
 @pytest.fixture
 def test_client():
@@ -33,7 +46,7 @@ def clean_db():
         ))
 
 @pytest.fixture
-def test_user(test_client: TestClient):
+def test_user(test_client: TestClient, db):
     response = test_client.post("/users",
                                     json={
                                         'email': 'aid@gmail.com',
@@ -42,8 +55,15 @@ def test_user(test_client: TestClient):
                                     )
     data = response.json()
     assert response.status_code == 200
-    assert 'aid@gmail.com' in data['email']
-    return data
+
+    admin = db.query(User).filter(
+        User.email == data['email']
+    ).first()
+    admin.role = 'ADMIN'
+    db.commit()
+    db.refresh(admin)
+    
+    return admin
 
 @pytest.fixture
 def test_user2(test_client: TestClient):
@@ -62,7 +82,7 @@ def test_user2(test_client: TestClient):
 def token(test_client: TestClient, test_user):
     login = test_client.post("/token",
                                 data={
-                                    'username': test_user['email'],
+                                    'username': test_user.email,
                                     'password': '123123'
                                 }
                                 )
