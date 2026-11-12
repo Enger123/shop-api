@@ -1,4 +1,3 @@
 app/migrations
 alembic.ini
 .env
-.github
