@@ -32,6 +32,18 @@ jobs:
         ports:
           - 6379:6379
 
+      rabbitmq:
+        image: rabbitmq:management
+        ports:
+        - "5672:5672"
+        - "15672:15672"
+        healthcheck:
+          test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+          interval: 10s
+          timeout: 5s
+          retries: 5
+          start_period: 10s
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -61,5 +73,7 @@ jobs:
           CACHE_TTL_SECONDS: 3600
           REDIS_HOST: localhost
           REDIS_PORT: 6379
+
+          RABBIT_HOST: localhost
         
         run: pytest
