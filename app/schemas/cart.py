@@ -3,9 +3,9 @@ from pydantic import BaseModel, Field
 class ProductInfo(BaseModel):
     id: int
     name: str
+    product_amount: int
     summary_price: int
     model_config = {'from_attributes': True}
-
 
 class CartSchema(BaseModel):
     product_id: int

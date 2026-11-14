@@ -8,7 +8,12 @@ class UserService:
         self.db = db
         self.user_repository = UserRepository(db)
 
-    def list_users(self):
+    def get_current_admin(self, current_user, operation: str):
+        if current_user.role != 'ADMIN':
+            raise HTTPException(status_code=403, detail=f"User can't {operation} users")
+    
+    def list_users(self, current_user):
+        self.get_current_admin(current_user=current_user, operation='view')
         users = self.user_repository.list_users()
         return [UserResponse.model_validate(user) for user in users]
 
@@ -25,7 +30,8 @@ class UserService:
         self.db.refresh(created_user)
         return UserResponse.model_validate(created_user)
 
-    def get_user(self, user_id: int):
+    def get_user(self, user_id: int, current_user):
+        self.get_current_admin(current_user=current_user, operation='view')
         user = self.user_repository.get_user(user_id)
         if not user:
             raise HTTPException(status_code=404, detail='User not found')

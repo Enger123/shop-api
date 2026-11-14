@@ -13,6 +13,12 @@ class CartRepository:
             where(Cart.user_id==user_id)
         ).all()
 
+    def get_product_in_cart(self, user_id: int, product_id: int):
+        return self.db.scalars(
+                    select(CartItem).join(Cart).
+                    where(Cart.user_id==user_id, CartItem.product_id==product_id)
+                ).first()
+    
     def add_product_in_cart(
         self, 
         product_id: int, 
@@ -41,6 +47,9 @@ class CartRepository:
         )
         self.db.add(new_cart)
         return new_cart
+
+    def delete_product_from_cart(self, product):
+        self.db.delete(product)
 
     def clear_cart_items(self, cart_items):
         for obj in cart_items:

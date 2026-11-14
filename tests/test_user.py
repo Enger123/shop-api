@@ -1,8 +1,12 @@
 import pytest
 from fastapi.testclient import TestClient
 
-def test_get_users(test_client: TestClient, test_user):
-    response = test_client.get("/users")
+def test_get_users(test_client: TestClient, test_user, token):
+    response = test_client.get("/users",
+                               headers={
+                                   'Authorization': f"Bearer {token}"
+                               }
+                               )
     data = response.json()
     assert response.status_code == 200
     assert isinstance(data, list)
@@ -37,8 +41,12 @@ def test_create_same_user(test_client: TestClient, test_user):
                                 )
     assert response.status_code == 403
 
-def test_get_user(test_client: TestClient, test_user):
-    response = test_client.get(f"/users/{test_user.id}")
+def test_get_user(test_client: TestClient, test_user, token):
+    response = test_client.get(f"/users/{test_user.id}",
+                               headers={
+                                   'Authorization': f"Bearer {token}"
+                               }
+                               )
 
     data = response.json()
     assert response.status_code == 200
@@ -46,8 +54,23 @@ def test_get_user(test_client: TestClient, test_user):
     assert data['email'] == "aid@gmail.com"
     assert data['role'] == 'ADMIN'
 
-def test_unexisting_user(test_client: TestClient):
+def test_not_authenticated_user(test_client: TestClient):
     response = test_client.get("/users/9999")
+    assert response.status_code == 401
+
+def test_forbidden_access_user(test_client: TestClient, token2):
+    response = test_client.get("/users/9999",
+                               headers={
+                                   'Authorization': f"Bearer {token2}"
+                               }
+                               )
+
+def test_unexisting_user(test_client: TestClient, token):
+    response = test_client.get("/users/9999",
+                               headers={
+                                   'Authorization': f"Bearer {token}"
+                               }
+                               )
     assert response.status_code == 404
 
 

@@ -5,17 +5,22 @@ from app.schemas.user import UserCreateSchema, UserUpdateSchema, UserResponse
 router = APIRouter(tags=["Users"])
 
 @router.get("/users", response_model=list[UserResponse])
-def list_users(user_service: UserServiceDep) -> list[UserResponse]:
-    return user_service.list_users()
+def list_users(user_service: UserServiceDep, current_user: Current_user) -> list[UserResponse]:
+    return user_service.list_users(current_user)
 
 @router.post("/users", response_model=UserResponse)
 def create_user(new_user: UserCreateSchema,
-                user_service: UserServiceDep) -> UserResponse:
+                user_service: UserServiceDep
+                ) -> UserResponse:
     return user_service.create_user(new_user)
 
 @router.get("/users/{user_id}", response_model=UserResponse)
-def get_user(user_id: int, user_service: UserServiceDep) -> UserResponse:
-    return user_service.get_user(user_id)
+def get_user(
+    user_service: UserServiceDep,
+    user_id: int,
+    current_user: Current_user
+) -> UserResponse:
+    return user_service.get_user(user_id, current_user)
 
 @router.patch("/users", response_model=UserResponse)
 def change_user(current_user: Current_user,
