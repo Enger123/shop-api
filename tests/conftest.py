@@ -6,7 +6,7 @@ from tests.database import test_db
 from sqlalchemy import text
 from app.models.user import User
 from tests.database import TestSession, get_db, get_test_db
-
+from unittest.mock import patch
 
 app.dependency_overrides[get_db] = get_test_db
 
@@ -144,14 +144,17 @@ def test_cart(test_client: TestClient, test_product, token):
     assert response.status_code == 200
     return response.json()
 
+#замокав щоб кожен раз не надсилався email, а просто ізолювалася частина з подією
 @pytest.fixture
 def test_order(test_client: TestClient, test_cart, token):
-    response = test_client.post("/orders",
-                                headers={
-                                    'Authorization': f'Bearer {token}'
-                                }
-                                )
+    with patch("app.services.order.event_publish_json") as notification:
+        response = test_client.post("/orders",
+                                    headers={
+                                        'Authorization': f'Bearer {token}'
+                                    }
+                                    )
     assert response.status_code == 200
+    notification.assert_called_once()
     return response.json()
 
 @pytest.fixture

@@ -1,5 +1,5 @@
 from app.api.dependencies import Current_user, OrderServiceDep
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, status
 
 router = APIRouter(tags=["Orders"])
 
@@ -25,4 +25,17 @@ async def add_products_in_order(
     request: Request
 ):
     return await order_service.add_to_orders(current_user, request.app.state.order_exchange)
-    
+
+
+@router.delete("/orders/{order_id}")
+async def cancel_order(
+    order_id: int,
+    current_user: Current_user,
+    order_service: OrderServiceDep,
+    # request: Request
+):
+    return await order_service.cancel_order(
+        order_id, 
+        current_user, 
+        #request.app.state.order_exchange
+        )

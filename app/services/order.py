@@ -82,3 +82,21 @@ class OrderService:
 
         return OrderResponse.model_validate(general_order)
 
+    
+    async def cancel_order(
+            self, 
+            order_id: int,
+            current_user
+            ):
+            user_order = self.order_repository.get_my_order(current_user.id, order_id)
+            
+            if not user_order:
+                raise HTTPException(status_code=404, detail='Order not found')
+            if user_order.status == 'cancelled':
+                raise HTTPException(status_code=409, detail='Order is already cancelled')
+            
+            user_order.status = 'cancelled'
+
+            self.db.commit()
+            self.db.refresh(user_order)
+            return OrderResponse.model_validate(user_order)

@@ -72,6 +72,7 @@ def test_get_my_order(test_client: TestClient, token, test_order):
                                     )
     print(response.json())
     assert response.status_code == 200
+    assert response.json()['status'] == 'pending'
 
 def test_add_to_orders_notfound_cart(test_client: TestClient, token):
     response = test_client.post(f"/orders",
@@ -80,3 +81,14 @@ def test_add_to_orders_notfound_cart(test_client: TestClient, token):
                                     }
                                         )
     assert response.status_code == 404
+
+def test_cancel_order(test_client: TestClient, test_order, token):
+    response = test_client.delete(f"/orders/{test_order['id']}",
+                                        headers={
+                                            'Authorization': f'Bearer {token}'
+                                        }
+                                            )
+    data = response.json()
+    assert test_order['status'] == 'pending'
+    assert response.status_code == 200
+    assert data['status'] == 'cancelled'
