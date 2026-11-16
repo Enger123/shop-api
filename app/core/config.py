@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     REDIS_PORT: int
     ORDER_EXCHANGE: str = "order"
     ORDER_ROUTING_KEY: str = "order.created"
+    # ORDER_CANCELLED_ROUTING_KEY: str = "order.cancelled"
     NOTIFICATIONS_QUEUE: str = "notifications.order_created"
     RABBIT_HOST: str
     EMAIL: str

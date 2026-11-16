@@ -63,15 +63,19 @@ class OrderService:
 
         self.db.commit()
         self.db.refresh(general_order)
+
         self.cache.delete_cache(settings.CACHE_PRODUCTS_KEY)
+
         event = {
             "event_id": str(uuid4()),
             "user_id": current_user.id,
             "order_id": general_order.id,
-            "amount": general_order.total_price,
             "user_email": current_user.email,
-            'price': general_order.total_price,
-            "ordered_items": ordered_items
+            "items": ordered_items,
+            "created_order": True,
+            "subject_for_email": "Order created",
+            "body_for_email": f"""You successfully ordered products and total price is {general_order.total_price}. 
+            Here is what you ordered"""
         }
 
         await event_publish_json(
@@ -86,7 +90,8 @@ class OrderService:
     async def cancel_order(
             self, 
             order_id: int,
-            current_user
+            current_user,
+            order_exchange
             ):
             user_order = self.order_repository.get_my_order(current_user.id, order_id)
             
@@ -97,6 +102,38 @@ class OrderService:
             
             user_order.status = 'cancelled'
 
+            for product_item in user_order.order_items:
+                product_item.product.stock += product_item.quantity
+
+            cancelled_items = [
+                        {
+                            "product": product_item.product.name,
+                            "quantity": product_item.quantity
+                         } for product_item in user_order.order_items
+                    ]
+
             self.db.commit()
             self.db.refresh(user_order)
+
+            self.cache.delete_cache(settings.CACHE_PRODUCTS_KEY)
+
+            event = {
+                "event_id": str(uuid4()),
+                "user_id": current_user.id,
+                "order_id": user_order.id,
+                "user_email": current_user.email,
+                "items": cancelled_items,
+                "created_order": False,
+                "subject_for_email": "Order cancelled",
+                "body_for_email": f"""You successfully cancelled your order.
+                The sum of order was {user_order.total_price}.
+                Here is what you cancelled"""
+            }
+    
+            await event_publish_json(
+                exchange=order_exchange,
+                routing_key=settings.ORDER_ROUTING_KEY,
+                data=event
+            )
+
             return OrderResponse.model_validate(user_order)

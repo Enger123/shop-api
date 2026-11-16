@@ -32,10 +32,10 @@ async def cancel_order(
     order_id: int,
     current_user: Current_user,
     order_service: OrderServiceDep,
-    # request: Request
+    request: Request
 ):
     return await order_service.cancel_order(
         order_id, 
         current_user, 
-        #request.app.state.order_exchange
+        request.app.state.order_exchange
         )

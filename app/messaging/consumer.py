@@ -14,21 +14,17 @@ async def handle_notifications_event(message: AbstractIncomingMessage):
         print(event)
 
         general_body_response = ""
-        for i, order_item in enumerate(event['ordered_items'], start=1):
+        for i, order_item in enumerate(event['items'], start=1):
             general_body_response += f"""\n{i})
             Product name: {order_item['product']} 
             Quantity: {order_item['quantity']}
             """
         
-        total_price = event['price']
-
         await send_email(
             recipient=event['user_email'],
-            subject='Order created',
-            body=f"""You successfully ordered products and total price is {total_price}. Here is what you ordered: 
-            {general_body_response}
-            """
-        )
+            subject=event['subject_for_email'],
+            body=event['body_for_email'] + f": {general_body_response}"
+            )
         
 
 async def start_notifications_consume(connection: AbstractConnection):
