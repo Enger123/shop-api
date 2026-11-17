@@ -25,7 +25,7 @@ class OrderRepository:
     def get_order_by_productid_userid(self, product_id: int, user_id: int):
         return self.db.scalars(
             select(Order).join(OrderItem)
-            .where(Order.user_id==user_id, OrderItem.product_id==product_id)
+            .where(Order.status != 'cancelled', Order.user_id==user_id, OrderItem.product_id==product_id)
         ).first()
 
     def create_order(self, user_id: int, total_price: int):

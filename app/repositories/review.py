@@ -30,6 +30,12 @@ class ReviewRepository:
             select(Review)
             .where(Review.product_id==product_id)
             ).all()
+    
+    def get_user_product_reviews(self, current_user, product_id: int):
+        return self.db.scalars(
+            select(Review)
+            .where(Review.product_id == product_id, Review.user_id == current_user.id)
+        ).first()
 
     
         

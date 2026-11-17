@@ -21,7 +21,10 @@ class CartService:
           product = self.product_repository.get_product(creating_cart.product_id)
           if not product:
                raise HTTPException(status_code=404, detail="Product does not exist")
-        
+
+          if product.is_active is False:
+               raise HTTPException(status_code=409, detail='Product is inactive')
+
           if product.stock < creating_cart.quantity:
                raise HTTPException(status_code=409, detail='Product not enough')
         
@@ -71,6 +74,9 @@ class CartService:
                current_user.id,
                product_id=updating_cart.product_id
                )
+
+          if not product_to_change:
+               raise HTTPException(status_code=404, detail='Cart is empty')
           
           product_to_change.quantity = updating_cart.quantity
           self.db.commit()

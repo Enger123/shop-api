@@ -29,6 +29,14 @@ class ReviewService:
         if not user_order:
             raise HTTPException(status_code=404, detail='User did not order this item')
 
+        user_reviews = self.review_repository.get_user_product_reviews(
+            current_user,
+            product_id
+        )
+
+        if user_reviews:
+            raise HTTPException(status_code=409, detail='User has already reviewed this product')
+
         review = self.review_repository.create_review(
             user_id=current_user.id,
             order_id=user_order.id,
