@@ -129,6 +129,7 @@ class OrderService:
                 The sum of order was {user_order.total_price}.
                 Here is what you cancelled"""
             }
+            #sa
     
             await event_publish_json(
                 exchange=order_exchange,
